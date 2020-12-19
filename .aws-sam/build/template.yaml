@@ -1,0 +1,31 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: 'AWS::Serverless-2016-10-31'
+Description: |
+  sam-nodejs-example
+  Sample SAM Template for sam-nodejs-example
+Globals:
+  Function:
+    Timeout: 3
+    Runtime: nodejs10.x
+Resources:
+  Upload:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: Upload
+      Handler: app.handler
+      Runtime: nodejs12.x
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: get
+            RestApiId: !<!Ref> ApiGatewayApi
+  ApiGatewayApi:
+    Type: 'AWS::Serverless::Api'
+    Properties:
+      StageName: dev
+      Cors:
+        AllowMethods: '''OPTIONS,POST,GET,PATCH'''
+        AllowHeaders: '''Content-Type'''
+        AllowOrigin: '''*'''

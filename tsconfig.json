@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "commonjs",
+    "allowJs": true,
+    "checkJs": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@root/*": ["/*"]
+    }
+  },
+  "include": [
+    "functions/**/*.ts",
+    "functions/**/*.js"
+  ]
+}
