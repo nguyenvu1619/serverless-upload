@@ -4,7 +4,7 @@ const sns = new SNS()
 export const handler = async (event) => {
     const params = {
         Message: "FIRST_SNS",
-        TopicArn: process.env.SNSAnalysisTopic
+        TopicArn: process.env.SNS_TOPIC_ANALYSIS_ARN
     }
     const publishText = await sns.publish(params).promise()
     return {

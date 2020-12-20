@@ -28,7 +28,7 @@ module.exports = {
   // Includes the aws-sdk only for development. The node10.x docker image
   // used by SAM CLI Local doens't include it but it's included in the actual
   // Lambda runtime.
-  externals: process.env.NODE_ENV === "development" ? [] : [],
+  externals: process.env.NODE_ENV === "development" ? [] : ["aws-sdk"],
 
   // Set the webpack mode
   mode: process.env.NODE_ENV || "production",

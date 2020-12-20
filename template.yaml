@@ -33,8 +33,7 @@ Resources:
       Runtime: nodejs12.x
       Environment:
         Variables:
-          SNS_TOPIC_ANALYSIS_ARN: 
-            Fn::GetAtt: [SNSAnalysisTopic, Arn]
+          SNS_TOPIC_ANALYSIS_ARN: !Ref SNSAnalysisTopic
       Events:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api

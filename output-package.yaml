@@ -1,17 +1,19 @@
 AWSTemplateFormatVersion: 2010-09-09
-Transform: 'AWS::Serverless-2016-10-31'
-Description: |
-  sam-nodejs-example
+Transform: AWS::Serverless-2016-10-31
+Description: 'sam-nodejs-example
+
   Sample SAM Template for sam-nodejs-example
+
+  '
 Globals:
   Function:
     Timeout: 3
     Runtime: nodejs10.x
 Resources:
   Upload:
-    Type: 'AWS::Serverless::Function'
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: Upload
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/c13097297739d7ba2c8604bc465f24e4
       Handler: app.handler
       Runtime: nodejs12.x
       Events:
@@ -20,25 +22,28 @@ Resources:
           Properties:
             Path: /hello
             Method: get
-            RestApiId: !<!Ref> ApiGatewayApi
+            RestApiId:
+              Ref: ApiGatewayApi
   Transcoder:
-    Type: 'AWS::Serverless::Function'
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: Transcoder
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/f1ea28542f11dbca593c3f49329043be
       Handler: app.handler
       Runtime: nodejs12.x
       Environment:
         Variables:
-          SNS_TOPIC_ANALYSIS_ARN: !<!Ref> SNSAnalysisTopic
+          SNS_TOPIC_ANALYSIS_ARN:
+            Ref: SNSAnalysisTopic
       Events:
         HelloWorld:
           Type: Api
           Properties:
             Path: /transcoder
             Method: get
-            RestApiId: !<!Ref> ApiGatewayApi
+            RestApiId:
+              Ref: ApiGatewayApi
   ApiGatewayApi:
-    Type: 'AWS::Serverless::Api'
+    Type: AWS::Serverless::Api
     Properties:
       StageName: dev
       Cors:
@@ -46,4 +51,4 @@ Resources:
         AllowHeaders: '''Content-Type'''
         AllowOrigin: '''*'''
   SNSAnalysisTopic:
-    Type: 'AWS::SNS::Topic'
+    Type: AWS::SNS::Topic
