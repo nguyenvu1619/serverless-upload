@@ -25,12 +25,16 @@ Resources:
             Path: /hello
             Method: get
             RestApiId: !Ref ApiGatewayApi
-  Transcoder:
+  Analystic:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: functions/transcoder
-      Handler: app.handler
+      Handler: app.analystic
       Runtime: nodejs12.x
+      Policies: 
+        - SNSPublishMessagePolicy:
+            TopicName:
+              Fn::GetAtt: [SNSAnalysisTopic, TopicName]
       Environment:
         Variables:
           SNS_TOPIC_ANALYSIS_ARN: !Ref SNSAnalysisTopic
@@ -38,9 +42,25 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /transcoder
+            Path: /analystic
             Method: get
             RestApiId: !Ref ApiGatewayApi
+        FileUploaded:
+          Type: S3
+          Properties:
+            Bucket: !Ref UploadFile
+            Events: s3:ObjectCreated:*
+  Transcoder:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: functions/transcoder
+      Handler: app.transcoder
+      Runtime: nodejs12.x
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref SNSAnalysisTopic
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -49,5 +69,11 @@ Resources:
         AllowMethods: "'OPTIONS,POST,GET,PATCH'"
         AllowHeaders: "'Content-Type'"
         AllowOrigin: "'*'"
+  UploadFile:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: local-task-nguyenvu
   SNSAnalysisTopic:
     Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: "SNSAnalysisTopic"

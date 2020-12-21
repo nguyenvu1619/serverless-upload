@@ -21,12 +21,15 @@ Resources:
             Path: /hello
             Method: get
             RestApiId: !<!Ref> ApiGatewayApi
-  Transcoder:
+  Analystic:
     Type: 'AWS::Serverless::Function'
     Properties:
-      CodeUri: Transcoder
-      Handler: app.handler
+      CodeUri: Analystic
+      Handler: app.analystic
       Runtime: nodejs12.x
+      Policies:
+        - SNSPublishMessagePolicy:
+            TopicName: !<!GetAtt> SNSAnalysisTopic.TopicName
       Environment:
         Variables:
           SNS_TOPIC_ANALYSIS_ARN: !<!Ref> SNSAnalysisTopic
@@ -34,9 +37,25 @@ Resources:
         HelloWorld:
           Type: Api
           Properties:
-            Path: /transcoder
+            Path: /analystic
             Method: get
             RestApiId: !<!Ref> ApiGatewayApi
+        FileUploaded:
+          Type: S3
+          Properties:
+            Bucket: !<!Ref> UploadFile
+            Events: 's3:ObjectCreated:*'
+  Transcoder:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: Transcoder
+      Handler: app.transcoder
+      Runtime: nodejs12.x
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !<!Ref> SNSAnalysisTopic
   ApiGatewayApi:
     Type: 'AWS::Serverless::Api'
     Properties:
@@ -45,5 +64,11 @@ Resources:
         AllowMethods: '''OPTIONS,POST,GET,PATCH'''
         AllowHeaders: '''Content-Type'''
         AllowOrigin: '''*'''
+  UploadFile:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: local-task-nguyenvu
   SNSAnalysisTopic:
     Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: SNSAnalysisTopic

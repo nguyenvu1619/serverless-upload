@@ -13,7 +13,7 @@ Resources:
   Upload:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/c13097297739d7ba2c8604bc465f24e4
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/3bed4c82583f607af3cdceb96d4e22bd
       Handler: app.handler
       Runtime: nodejs12.x
       Events:
@@ -24,12 +24,18 @@ Resources:
             Method: get
             RestApiId:
               Ref: ApiGatewayApi
-  Transcoder:
+  Analystic:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/f1ea28542f11dbca593c3f49329043be
-      Handler: app.handler
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/37bda899db06be538481362da6dc7482
+      Handler: app.analystic
       Runtime: nodejs12.x
+      Policies:
+      - SNSPublishMessagePolicy:
+          TopicName:
+            Fn::GetAtt:
+            - SNSAnalysisTopic
+            - TopicName
       Environment:
         Variables:
           SNS_TOPIC_ANALYSIS_ARN:
@@ -38,10 +44,28 @@ Resources:
         HelloWorld:
           Type: Api
           Properties:
-            Path: /transcoder
+            Path: /analystic
             Method: get
             RestApiId:
               Ref: ApiGatewayApi
+        FileUploaded:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: UploadFile
+            Events: s3:ObjectCreated:*
+  Transcoder:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/358a5f3833e67395c9dbf71474767066
+      Handler: app.transcoder
+      Runtime: nodejs12.x
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic:
+              Ref: SNSAnalysisTopic
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -50,5 +74,11 @@ Resources:
         AllowMethods: '''OPTIONS,POST,GET,PATCH'''
         AllowHeaders: '''Content-Type'''
         AllowOrigin: '''*'''
+  UploadFile:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: local-task-nguyenvu
   SNSAnalysisTopic:
     Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: SNSAnalysisTopic
