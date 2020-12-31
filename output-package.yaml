@@ -7,7 +7,7 @@ Description: 'sam-nodejs-example
   '
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
     Runtime: nodejs10.x
 Resources:
   Upload:
@@ -24,24 +24,56 @@ Resources:
             Method: get
             RestApiId:
               Ref: ApiGatewayApi
-  Transcoder:
+  Analystic:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/f1ea28542f11dbca593c3f49329043be
-      Handler: app.handler
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/7ad237f4c530cca5f1ba0dde049df2af
+      Handler: app.analystic
       Runtime: nodejs12.x
+      Policies:
+      - SNSPublishMessagePolicy:
+          TopicName:
+            Fn::GetAtt:
+            - SNSAnalysisTopic
+            - TopicName
+      - DynamoDBWritePolicy:
+          TableName: BatchJob
       Environment:
         Variables:
           SNS_TOPIC_ANALYSIS_ARN:
             Ref: SNSAnalysisTopic
+          DYNAMODB_TableName:
+            Fn::GetAtt:
+            - DynamoDBTBatchJobTable
+            - Arn
       Events:
         HelloWorld:
           Type: Api
           Properties:
-            Path: /transcoder
+            Path: /analystic
             Method: get
             RestApiId:
               Ref: ApiGatewayApi
+        FileUploaded:
+          Type: S3
+          Properties:
+            Bucket:
+              Ref: UploadFile
+            Events: s3:ObjectCreated:*
+  Transcoder:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/9617a5f4b795349bf47d532d6d315c18
+      Handler: app.transcoder
+      Runtime: nodejs12.x
+      Layers:
+      - Ref: FFMPEGLAYER
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic:
+              Ref: SNSAnalysisTopic
   ApiGatewayApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -50,5 +82,36 @@ Resources:
         AllowMethods: '''OPTIONS,POST,GET,PATCH'''
         AllowHeaders: '''Content-Type'''
         AllowOrigin: '''*'''
+  UploadFile:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: local-task-nguyenvu
   SNSAnalysisTopic:
     Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: SNSAnalysisTopic
+  SNSJobListTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      DisplayName: SNSJobListTopic
+  DynamoDBTBatchJobTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+      KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: BatchJob
+  FFMPEGLAYER:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: ffmpeg
+      Description: Execution file for ffmpeg
+      ContentUri: s3://local-nguyenvu-upload-lambda-functions/ccbd35cf774d964cfe57de274f110e12
+      CompatibleRuntimes:
+      - nodejs12.x

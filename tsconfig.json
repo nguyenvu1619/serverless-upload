@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "target": "es2015",
+    "baseUrl": "/",
     "module": "commonjs",
     "allowJs": true,
     "checkJs": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "esModuleInterop": true,
     "paths": {

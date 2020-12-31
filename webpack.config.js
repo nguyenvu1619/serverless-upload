@@ -1,5 +1,5 @@
 const AwsSamPlugin = require("aws-sam-webpack-plugin");
-
+const webpack = require('webpack')
 const awsSamPlugin = new AwsSamPlugin();
 
 module.exports = {
@@ -45,6 +45,9 @@ module.exports = {
 
   // Add the AWS SAM Webpack plugin
   plugins: [
-    awsSamPlugin
+    awsSamPlugin,
+    new webpack.DefinePlugin({
+      'process.env.FLUENTFFMPEG_COV': false
+  })
   ]
 }
