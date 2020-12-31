@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "development": {
-    "localFunctionInvoke": "Upload"
+    "localFunctionInvoke": "Transcoder"
   },
   "deployment": {
     "region": "ap-southeast-1",
@@ -18,7 +18,7 @@
     "build": "webpack-cli",
     "build:watch": "webpack-cli -w",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "sam:local:invoke": "sam local invoke Upload",
+    "sam:local:invoke": "sam local invoke Transcoder",
     "sam:local:api:start": "sam local start-api -p 4000",
     "sam:start:local": "sam local start-lambda --host 0.0.0.0 --port 3000",
     "sam:package": "cross-env-shell sam package --template-file ./.aws-sam/build/template.yaml --output-template-file output-package.yaml --s3-bucket $npm_package_deployment_environmentIdentifier$npm_package_deployment_s3BucketName --region $npm_package_deployment_region",

@@ -60,7 +60,7 @@ Resources:
         - DynamoDBWritePolicy:
             TableName: BatchJob
         - S3WritePolicy:
-            bucketName: !<!Ref> TemporaryFile
+            BucketName: !<!Ref> TemporaryFile
       Layers:
         - !<!Ref> FFMPEGLAYER
       Events:
@@ -70,7 +70,7 @@ Resources:
             Topic: !<!Ref> SNSAnalysisTopic
       Environment:
         Variables:
-          S3BucketName: !<!GetAtt> TemporaryFile.BucketName
+          S3BucketName: !<!Ref> TemporaryFile
   ExtractAudio:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -126,6 +126,8 @@ Resources:
     Properties:
       LayerName: ffmpeg
       Description: Execution file for ffmpeg
-      ContentUri: layer/nodejs.zip
+      ContentUri:
+        Bucket: aws-layers-nguyenvu
+        Key: nodejs.zip
       CompatibleRuntimes:
         - nodejs12.x

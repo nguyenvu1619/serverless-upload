@@ -85,17 +85,31 @@ export const analystic = async (event) => {
 
 
 export const transcoder = async (event) => {
+    try{
     var message = event.Records[0].Sns.Message;
     const data = JSON.parse(message)
     const { url, batchJobId, jobId, start, end } = data
+    const trancoderPromise = new Promise((resolve, reject) => {
     ffmpeg(url).inputOptions([
-        `--ss ${start}`,
-        `--ss ${end}`
+        `-ss ${start}`,
+        `-to ${end}`
     ]).outputOptions([
         '-an',
         '-s hd720'
     ])
+    .on('end', () => {
+        resolve(true)
+    })
+    .on('error', err => {
+        console.log(err)
+        reject(err)
+    })
+    .on('stderr', (line) => {
+        console.log(line)
+    })
     .outputFormat('mp4').save(`/tmp/ok.mp4`)
+    })
+    await trancoderPromise
     const objectName = `${batchJobId}/${jobId}/${start}-${end}.mp4`
     const uploadStream = ({ Bucket, Key }) => {
         const s3 = new S3();
@@ -118,8 +132,12 @@ export const transcoder = async (event) => {
       'Access-Control-Allow-Headers': 'Content-Type',
       'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PATCH'
     },
-    body: JSON.stringify(message)
+    body: JSON.stringify("")
     }
+}catch(e){
+    console.log(e)
+    return false
+}
 }
 
 export const extractAudio = async (event) => {
