@@ -84,8 +84,8 @@ Resources:
       CodeUri: functions/transcoder
       Handler: app.extractAudio
       Runtime: nodejs12.x
-      Layers:
-        - !Ref FFMPEGLAYER
+      # Layers:
+      #   - !Ref FFMPEGLAYER
       Events:
         SNSEvent:
           Type: SNS

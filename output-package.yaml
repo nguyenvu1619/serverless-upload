@@ -7,7 +7,7 @@ Description: 'sam-nodejs-example
   '
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 300
     Runtime: nodejs10.x
 Resources:
   Upload:
@@ -27,7 +27,7 @@ Resources:
   Analystic:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/263357edb7eec9a8280dd47af6302c6a
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/f3a47d0e3caf7de612c5d49e21a93256
       Handler: app.analystic
       Runtime: nodejs12.x
       Policies:
@@ -63,7 +63,7 @@ Resources:
   Transcoder:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/84eb848d64f9713fb65a829a66b5462b
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/a0d9d37a5b7650370c7cc03e95d26e3c
       Handler: app.transcoder
       Runtime: nodejs12.x
       Policies:
@@ -92,11 +92,9 @@ Resources:
   ExtractAudio:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/c061e1836d731ee1cc04d9b5c38ccc7d
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/3ce85e38fad7728250063c3c9393ff26
       Handler: app.extractAudio
       Runtime: nodejs12.x
-      Layers:
-      - Ref: FFMPEGLAYER
       Events:
         SNSEvent:
           Type: SNS

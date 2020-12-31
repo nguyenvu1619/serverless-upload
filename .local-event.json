@@ -1,0 +1,15 @@
+{
+    "Records": [
+        {
+            "Sns": {
+                "Message": {
+                    "url": "https://nguyenvu-upload-lambda-functions.s3-ap-southeast-1.amazonaws.com/theboy.mp4",
+                    "batchJobId": 123,
+                    "jobId": 123,
+                    "start": 30,
+                    "end": 60
+                }
+            }
+        }
+    ]
+}

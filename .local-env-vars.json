@@ -1,0 +1,5 @@
+{
+    "Transcoder":{
+        "S3BucketName": "local-temporary-file-nguyenvu"
+    }
+}

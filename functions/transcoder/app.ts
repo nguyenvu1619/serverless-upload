@@ -8,7 +8,7 @@ import S3 from 'aws-sdk/clients/s3'
 
 const sns = new SNS()
 ffmpeg.setFfmpegPath('/opt/ffmpeg')
-ffmpeg.setFfprobePath('/opt/ffprobe')
+// ffmpeg.setFfprobePath('/opt/ffprobe')
     
 const topicArn = process.env.SNS_TOPIC_ANALYSIS_ARN
 const tableName = process.env.DYNAMODB_TableName
@@ -83,9 +83,24 @@ export const analystic = async (event) => {
    
 }
 
-
+const test = {
+    "Records": [
+        {
+            "Sns": {
+                "Message": {
+                    "url": "https://nguyenvu-upload-lambda-functions.s3-ap-southeast-1.amazonaws.com/theboy.mp4",
+                    "batchJobId": 123,
+                    "jobId": 123,
+                    "start": 30,
+                    "end": 60
+                }
+            }
+        }
+    ]
+}
 export const transcoder = async (event) => {
     try{
+    console.log(event.Records)
     var message = event.Records[0].Sns.Message;
     const data = JSON.parse(message)
     const { url, batchJobId, jobId, start, end } = data
@@ -98,11 +113,11 @@ export const transcoder = async (event) => {
         '-s hd720'
     ])
     .on('end', () => {
+        console.log("Asdada")
         resolve(true)
     })
     .on('error', err => {
         console.log(err)
-        reject(err)
     })
     .on('stderr', (line) => {
         console.log(line)
@@ -135,8 +150,18 @@ export const transcoder = async (event) => {
     body: JSON.stringify("")
     }
 }catch(e){
-    console.log(e)
-    return false
+    console.log(e.toString(), "asdasdas")
+    return {
+        statusCode: 200,
+    // Headers must be sent here as well as defined in the template.yaml.
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': "*",
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PATCH'
+    },
+    body: JSON.stringify("")
+    }
 }
 }
 

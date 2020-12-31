@@ -5,7 +5,7 @@ Description: |
   Sample SAM Template for sam-nodejs-example
 Globals:
   Function:
-    Timeout: 30
+    Timeout: 300
     Runtime: nodejs10.x
 Resources:
   Upload:
@@ -77,8 +77,6 @@ Resources:
       CodeUri: ExtractAudio
       Handler: app.extractAudio
       Runtime: nodejs12.x
-      Layers:
-        - !<!Ref> FFMPEGLAYER
       Events:
         SNSEvent:
           Type: SNS
