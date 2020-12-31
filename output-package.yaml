@@ -13,7 +13,7 @@ Resources:
   Upload:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/c13097297739d7ba2c8604bc465f24e4
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/3bed4c82583f607af3cdceb96d4e22bd
       Handler: app.handler
       Runtime: nodejs12.x
       Events:
@@ -27,7 +27,11 @@ Resources:
   Analystic:
     Type: AWS::Serverless::Function
     Properties:
+<<<<<<< HEAD
       CodeUri: s3://local-nguyenvu-upload-lambda-functions/7ad237f4c530cca5f1ba0dde049df2af
+=======
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/37bda899db06be538481362da6dc7482
+>>>>>>> 5a45ecf72d60cfc6acf68bd1044d1604814372b4
       Handler: app.analystic
       Runtime: nodejs12.x
       Policies:
@@ -36,8 +40,11 @@ Resources:
             Fn::GetAtt:
             - SNSAnalysisTopic
             - TopicName
+<<<<<<< HEAD
       - DynamoDBWritePolicy:
           TableName: BatchJob
+=======
+>>>>>>> 5a45ecf72d60cfc6acf68bd1044d1604814372b4
       Environment:
         Variables:
           SNS_TOPIC_ANALYSIS_ARN:
@@ -63,11 +70,17 @@ Resources:
   Transcoder:
     Type: AWS::Serverless::Function
     Properties:
+<<<<<<< HEAD
       CodeUri: s3://local-nguyenvu-upload-lambda-functions/9617a5f4b795349bf47d532d6d315c18
       Handler: app.transcoder
       Runtime: nodejs12.x
       Layers:
       - Ref: FFMPEGLAYER
+=======
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/358a5f3833e67395c9dbf71474767066
+      Handler: app.transcoder
+      Runtime: nodejs12.x
+>>>>>>> 5a45ecf72d60cfc6acf68bd1044d1604814372b4
       Events:
         SNSEvent:
           Type: SNS
@@ -90,6 +103,7 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
       DisplayName: SNSAnalysisTopic
+<<<<<<< HEAD
   SNSJobListTopic:
     Type: AWS::SNS::Topic
     Properties:
@@ -115,3 +129,5 @@ Resources:
       ContentUri: s3://local-nguyenvu-upload-lambda-functions/ccbd35cf774d964cfe57de274f110e12
       CompatibleRuntimes:
       - nodejs12.x
+=======
+>>>>>>> 5a45ecf72d60cfc6acf68bd1044d1604814372b4
