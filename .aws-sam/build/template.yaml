@@ -5,7 +5,7 @@ Description: |
   Sample SAM Template for sam-nodejs-example
 Globals:
   Function:
-    Timeout: 3
+    Timeout: 30
     Runtime: nodejs10.x
 Resources:
   Upload:
@@ -30,9 +30,12 @@ Resources:
       Policies:
         - SNSPublishMessagePolicy:
             TopicName: !<!GetAtt> SNSAnalysisTopic.TopicName
+        - DynamoDBWritePolicy:
+            TableName: BatchJob
       Environment:
         Variables:
           SNS_TOPIC_ANALYSIS_ARN: !<!Ref> SNSAnalysisTopic
+          DYNAMODB_TableName: !<!GetAtt> DynamoDBTBatchJobTable.Arn
       Events:
         HelloWorld:
           Type: Api
@@ -51,6 +54,31 @@ Resources:
       CodeUri: Transcoder
       Handler: app.transcoder
       Runtime: nodejs12.x
+      Policies:
+        - SNSPublishMessagePolicy:
+            TopicName: !<!GetAtt> SNSAnalysisTopic.TopicName
+        - DynamoDBWritePolicy:
+            TableName: BatchJob
+        - S3WritePolicy:
+            bucketName: !<!Ref> TemporaryFile
+      Layers:
+        - !<!Ref> FFMPEGLAYER
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !<!Ref> SNSAnalysisTopic
+      Environment:
+        Variables:
+          S3BucketName: !<!GetAtt> TemporaryFile.BucketName
+  ExtractAudio:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      CodeUri: ExtractAudio
+      Handler: app.extractAudio
+      Runtime: nodejs12.x
+      Layers:
+        - !<!Ref> FFMPEGLAYER
       Events:
         SNSEvent:
           Type: SNS
@@ -68,7 +96,36 @@ Resources:
     Type: 'AWS::S3::Bucket'
     Properties:
       BucketName: local-task-nguyenvu
+  TemporaryFile:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: local-temporary-file-nguyenvu
   SNSAnalysisTopic:
     Type: 'AWS::SNS::Topic'
     Properties:
       DisplayName: SNSAnalysisTopic
+  SNSJobListTopic:
+    Type: 'AWS::SNS::Topic'
+    Properties:
+      DisplayName: SNSJobListTopic
+  DynamoDBTBatchJobTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      TableName: BatchJob
+  FFMPEGLAYER:
+    Type: 'AWS::Serverless::LayerVersion'
+    Properties:
+      LayerName: ffmpeg
+      Description: Execution file for ffmpeg
+      ContentUri: layer/nodejs.zip
+      CompatibleRuntimes:
+        - nodejs12.x

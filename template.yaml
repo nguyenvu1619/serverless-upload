@@ -60,6 +60,31 @@ Resources:
       CodeUri: functions/transcoder
       Handler: app.transcoder
       Runtime: nodejs12.x
+      Policies: 
+        - SNSPublishMessagePolicy:
+            TopicName:
+              Fn::GetAtt: [SNSAnalysisTopic, TopicName]
+        - DynamoDBWritePolicy:
+            TableName: "BatchJob"
+        - S3WritePolicy:
+            bucketName: !Ref TemporaryFile
+      Layers:
+        - !Ref FFMPEGLAYER
+      Events:
+        SNSEvent:
+          Type: SNS
+          Properties:
+            Topic: !Ref SNSAnalysisTopic
+      Environment:
+        Variables:
+          S3BucketName: 
+            Fn::GetAtt: [TemporaryFile, BucketName]
+  ExtractAudio:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: functions/transcoder
+      Handler: app.extractAudio
+      Runtime: nodejs12.x
       Layers:
         - !Ref FFMPEGLAYER
       Events:
@@ -79,6 +104,10 @@ Resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: local-task-nguyenvu
+  TemporaryFile:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: local-temporary-file-nguyenvu
   SNSAnalysisTopic:
     Type: AWS::SNS::Topic
     Properties:

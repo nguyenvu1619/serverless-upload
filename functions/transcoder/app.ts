@@ -2,13 +2,17 @@ import SNS from 'aws-sdk/clients/sns'
 import ffmpeg from 'fluent-ffmpeg'
 import DynamoDb from 'aws-sdk/clients/dynamodb'
 import { v4 as uuid} from 'uuid'
+import stream from 'stream'
+import fs from 'fs'
+import S3 from 'aws-sdk/clients/s3'
 
 const sns = new SNS()
 ffmpeg.setFfmpegPath('/opt/ffmpeg')
 ffmpeg.setFfprobePath('/opt/ffprobe')
-
+    
 const topicArn = process.env.SNS_TOPIC_ANALYSIS_ARN
 const tableName = process.env.DYNAMODB_TableName
+const bucketName = process.env.S3BucketName
 export const analystic = async (event) => {
     try{
     const url = "https://nguyenvu-upload-lambda-functions.s3-ap-southeast-1.amazonaws.com/theboy.mp4"
@@ -81,6 +85,44 @@ export const analystic = async (event) => {
 
 
 export const transcoder = async (event) => {
+    var message = event.Records[0].Sns.Message;
+    const data = JSON.parse(message)
+    const { url, batchJobId, jobId, start, end } = data
+    ffmpeg(url).inputOptions([
+        `--ss ${start}`,
+        `--ss ${end}`
+    ]).outputOptions([
+        '-an',
+        '-s hd720'
+    ])
+    .outputFormat('mp4').save(`/tmp/ok.mp4`)
+    const objectName = `${batchJobId}/${jobId}/${start}-${end}.mp4`
+    const uploadStream = ({ Bucket, Key }) => {
+        const s3 = new S3();
+        const pass = new stream.PassThrough();
+        return {
+          writeStream: pass,
+          promise: s3.upload({ Bucket, Key, Body: pass }).promise(),
+        };
+      }
+    const { writeStream, promise } = uploadStream({Bucket: bucketName, Key: objectName});
+    const readStream = fs.createReadStream('/tmp/ok.mp4');
+    const pipeline = readStream.pipe(writeStream);
+    await promise
+    return {
+        statusCode: 200,
+    // Headers must be sent here as well as defined in the template.yaml.
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': "*",
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PATCH'
+    },
+    body: JSON.stringify(message)
+    }
+}
+
+export const extractAudio = async (event) => {
     var message = event.Records[0].Sns.Message;
     console.log('Message received from SNS:', message);
     return {
