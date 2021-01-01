@@ -1,0 +1,52 @@
+{
+  "name": "serverless-upload",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "development": {
+    "localFunctionInvoke": "Transcoder"
+  },
+  "deployment": {
+    "region": "ap-southeast-1",
+    "environment": "LOCAL",
+    "environmentIdentifier": "local-",
+    "stackName": "function",
+    "capabilities": "CAPABILITY_IAM",
+    "s3BucketName": "nguyenvu-upload-lambda-functions"
+  },
+  "scripts": {
+    "build": "webpack-cli",
+    "build:watch": "webpack-cli -w",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sam:local:invoke": "sam local invoke Transcoder --env-vars .local-env-vars.json --event .local-event.json",
+    "sam:local:api:start": "sam local start-api -p 4000 --env-vars .local-env-vars.json --event .local-event.json",
+    "sam:start:local": "sam local start-lambda --host 0.0.0.0 --port 3000",
+    "sam:package": "cross-env-shell sam package --template-file ./.aws-sam/build/template.yaml --output-template-file output-package.yaml --s3-bucket $npm_package_deployment_environmentIdentifier$npm_package_deployment_s3BucketName --region $npm_package_deployment_region",
+    "sam:deploy": "cross-env-shell sam deploy --template-file output-package.yaml --stack-name $npm_package_deployment_environment-$npm_package_deployment_stackName --capabilities $npm_package_deployment_capabilities --region $npm_package_deployment_region --parameter-overrides ParameterKey=EnvironmentName,ParameterValue=$npm_package_deployment_environment ParameterKey=EnvironmentIdentifier,ParameterValue=$npm_package_deployment_environmentIdentifier ParameterKey=GraphQLApiEndpoint,ParameterValue=$npm_package_deployment_environmentIdentifier$npm_package_deployment_backendApiUrlCName.$npm_package_deployment_domainName ParameterKey=DomainName,ParameterValue=$npm_package_deployment_domainName ParameterKey=Route53PublicHostedZoneID,ParameterValue=$npm_package_deployment_publicHostedZoneId ParameterKey=KeyStackName,ParameterValue=$npm_package_deployment_environment-$npm_package_deployment_keyStackName ParameterKey=StorageStackName,ParameterValue=$npm_package_deployment_environment-$npm_package_deployment_storageStackName ParameterKey=NetworkStackName,ParameterValue=$npm_package_deployment_environment-$npm_package_deployment_networkStackName --debug",
+    "sam:build:package:deploy": "cross-env-shell npm run build && npm run sam:package && npm run sam:deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenvu1619/serverless-upload.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nguyenvu1619/serverless-upload/issues"
+  },
+  "homepage": "https://github.com/nguyenvu1619/serverless-upload#readme",
+  "devDependencies": {
+    "@types/node": "^14.14.14",
+    "aws-sam-webpack-plugin": "^0.7.0",
+    "aws-sdk": "^2.814.0",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.2.0",
+    "nodemon": "^2.0.6",
+    "ts-loader": "^8.0.12",
+    "typescript": "^4.1.3"
+  },
+  "dependencies": {
+    "@types/fluent-ffmpeg": "^2.1.16",
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}

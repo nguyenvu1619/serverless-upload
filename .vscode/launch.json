@@ -1,0 +1,65 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Upload",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 5858,
+      "localRoot": "${workspaceRoot}/.aws-sam/build/Upload",
+      "remoteRoot": "/var/task",
+      "protocol": "inspector",
+      "stopOnEntry": false,
+      "outFiles": [
+        "${workspaceRoot}/.aws-sam/build/Upload/app.js"
+      ],
+      "sourceMaps": true
+    },
+    {
+      "name": "Analystic",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 5858,
+      "localRoot": "${workspaceRoot}/.aws-sam/build/Analystic",
+      "remoteRoot": "/var/task",
+      "protocol": "inspector",
+      "stopOnEntry": false,
+      "outFiles": [
+        "${workspaceRoot}/.aws-sam/build/Analystic/app.js"
+      ],
+      "sourceMaps": true
+    },
+    {
+      "name": "Transcoder",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 5858,
+      "localRoot": "${workspaceRoot}/.aws-sam/build/Transcoder",
+      "remoteRoot": "/var/task",
+      "protocol": "inspector",
+      "stopOnEntry": false,
+      "outFiles": [
+        "${workspaceRoot}/.aws-sam/build/Transcoder/app.js"
+      ],
+      "sourceMaps": true
+    },
+    {
+      "name": "ExtractAudio",
+      "type": "node",
+      "request": "attach",
+      "address": "localhost",
+      "port": 5858,
+      "localRoot": "${workspaceRoot}/.aws-sam/build/ExtractAudio",
+      "remoteRoot": "/var/task",
+      "protocol": "inspector",
+      "stopOnEntry": false,
+      "outFiles": [
+        "${workspaceRoot}/.aws-sam/build/ExtractAudio/app.js"
+      ],
+      "sourceMaps": true
+    }
+  ]
+}
