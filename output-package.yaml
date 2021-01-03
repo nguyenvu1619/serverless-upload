@@ -27,7 +27,7 @@ Resources:
   Analystic:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/f3a47d0e3caf7de612c5d49e21a93256
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/a3ccdb1c7b4afb87552b15cf7075c01f
       Handler: app.analystic
       Runtime: nodejs12.x
       Policies:
@@ -63,7 +63,7 @@ Resources:
   Transcoder:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/a0d9d37a5b7650370c7cc03e95d26e3c
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/2f103592d885aa8cd56fe66a2524266c
       Handler: app.transcoder
       Runtime: nodejs12.x
       Policies:
@@ -92,7 +92,7 @@ Resources:
   ExtractAudio:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://local-nguyenvu-upload-lambda-functions/3ce85e38fad7728250063c3c9393ff26
+      CodeUri: s3://local-nguyenvu-upload-lambda-functions/dc7d4bca09751c37f11a57849d321ef9
       Handler: app.extractAudio
       Runtime: nodejs12.x
       Events:

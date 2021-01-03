@@ -133,7 +133,7 @@ Resources:
         Properties:
             LayerName: ffmpeg
             Description: Execution file for ffmpeg
-            ContentUri:
+            ContentUri: # ../../layer
               Bucket: aws-layers-nguyenvu
               Key: nodejs.zip
             CompatibleRuntimes:

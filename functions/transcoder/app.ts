@@ -122,7 +122,7 @@ export const transcoder = async (event) => {
     .on('stderr', (line) => {
         console.log(line)
     })
-    .outputFormat('mp4').save(`/tmp/ok.mp4`)
+    .outputFormat('mp4').save(`/tmp/ok.mp4`).run()
     })
     await trancoderPromise
     const objectName = `${batchJobId}/${jobId}/${start}-${end}.mp4`
