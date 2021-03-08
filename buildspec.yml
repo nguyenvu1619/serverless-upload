@@ -6,7 +6,7 @@ phases:
   build:
     commands:
       - npm install
-      - npm run build && npm run sam:package
+      - npm run sam:build:package:deploy
 artifacts:
   files:
     - output-package.yaml
