@@ -15,7 +15,7 @@ const tableName = process.env.DYNAMODB_TableName
 const bucketName = process.env.S3BucketName
 export const analystic = async (event) => {
     try{
-        console.log("deloyeddddddddddddd")
+        console.log("deloyedddddddddddddddd")
     const url = "https://nguyenvu-upload-lambda-functions.s3-ap-southeast-1.amazonaws.com/theboy.mp4"
         const promise = new Promise(async resolve => {
             ffmpeg.ffprobe(url, async(err, metadata) =>{
