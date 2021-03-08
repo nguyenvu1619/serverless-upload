@@ -5,6 +5,7 @@ phases:
         python: 3.8
   build:
     commands:
+      - npm install
       - npm run build && npm run package
 artifacts:
   files:
